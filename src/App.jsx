@@ -2,15 +2,12 @@ import usePokemons from './hooks/usePokemons'
 import Cards from './components/Cards'
 import { useEffect, useState } from 'react';
 import suffle from './utils/suffle';
+import Loading from './components/Loading';
+import Error from './components/Error';
 
 function App() {
-  const pokemons = usePokemons();
-  const [items, setItems] = useState([]) 
-
-  useEffect(() => {
-    setItems([...pokemons])
-  }, [pokemons])
-
+  const [pokemons, error, loading] = usePokemons();
+  const [items, setItems] = useState([])
   const [checkedIds, setCheckedIds] = useState({});
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
@@ -19,6 +16,12 @@ function App() {
     setScore(0)
     setCheckedIds({})
   }
+
+  useEffect(() => {
+    if (pokemons) {
+      setItems(pokemons)
+    }
+  }, [pokemons])
 
   const handleClickCard = (id) => {
     if (checkedIds[id]) {
@@ -55,7 +58,8 @@ function App() {
                 </div>
               </div>
             </div>
-            <Cards items={items} handleClickCard={handleClickCard}/>
+            {loading ? <Loading/> : (
+              error ? <Error/> : <Cards items={items} handleClickCard={handleClickCard}/>)}
           </div>
         </div>
       </div>
